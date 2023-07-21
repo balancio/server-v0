@@ -1,30 +1,16 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import fs from 'fs';
+import { database } from './services/database'
 
-const credentials = process.env.BALANCIO_DB_CERT
+const data = []
 
-const client = new MongoClient('mongodb+srv://freecluster.aqgrrpg.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority', {
-    tlsCertificateKeyFile: credentials,
-    serverApi: ServerApiVersion.v1
-});
-
-async function run() {
-    try {
-        await client.connect();
-        const database = client.db("balancio");
-        const collection = database.collection("transactions");
-        const docCount = await collection.countDocuments({});
-        // console.log(docCount);
-        
-        const cursor = collection.find()
+const result = await database.run(
+    async (db) => {
+        const coll = db.collection("users")
+        const cursor = coll.find()
         for (let doc = await cursor.tryNext(); doc != null; doc = await cursor.tryNext()) {
-            console.log(doc.name)
+            console.log(doc.username)
+            data.push(doc.username)
         }
-        // perform actions using client
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
     }
-}
+)
 
-run().catch(console.dir);
+console.log(data)
