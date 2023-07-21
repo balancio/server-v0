@@ -1,7 +1,8 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import { config as envConfig } from 'dotenv'
 
 // Loads environment variables from .env file
-require('dotenv').config()
+envConfig()
 
 // Read DB config environment variables
 const CERT = process.env.DB_CONN_CERT
