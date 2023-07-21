@@ -1,12 +1,15 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const credentials = process.env.BALANCIO_DB_CERT
+// Loads environment variables from .env file
+require('dotenv').config()
 
-const client = new MongoClient(
-    'mongodb+srv://freecluster.aqgrrpg.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority', 
-    { tlsCertificateKeyFile: credentials, serverApi: ServerApiVersion.v1 }
-);
+// Read DB config environment variables
+const CERT = process.env.DB_CONN_CERT
+const URL = process.env.DB_CONN_URL
+const NAME = process.env.DB_NAME
 
-const dbName = "balancio"
+// Prepare data for export
+const client = new MongoClient( URL, { tlsCertificateKeyFile: CERT, serverApi: ServerApiVersion.v1 });
+const dbName = NAME
 
 export { client, dbName }

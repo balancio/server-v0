@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "f() { BALANCIO_DB_CERT=\"$1\" node --experimental-specifier-resolution=node .; }; f"
+    "start": "node --experimental-specifier-resolution=node ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "mongodb": "^5.7.0",
     "mongosh": "^1.10.1"
   }
