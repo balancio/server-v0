@@ -1,6 +1,8 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { config as envConfig } from 'dotenv'
 
+console.log('[ database / config ]')
+
 // Loads environment variables from .env file
 envConfig()
 

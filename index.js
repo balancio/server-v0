@@ -1,6 +1,6 @@
 import { config as envConfig } from 'dotenv'
 import express from 'express'
-import { database } from './services/database'
+import auth from './services/auth'
 
 envConfig()
 
@@ -15,16 +15,12 @@ console.log(srv)
 
 const app = express()
 
+app.post('/login', (req, res) => {
+    const ok = auth.login('ben', 'ben1123')
+    res.status(ok ? 200 : 406)
+})
+
 app.listen(srv.PORT, srv.HOST, async () => {
+    // Debug Info
     console.log(`Listening on port ${srv.PORT}`)
-    // Test db conn
-    await database.run(
-        async (db) => {
-            const coll = db.collection("users")
-            const cursor = coll.find()
-            for (let doc = await cursor.tryNext(); doc != null; doc = await cursor.tryNext()) {
-                console.log(doc.username)
-            }
-        }
-    )
 })

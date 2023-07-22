@@ -14,19 +14,25 @@ const database = {
      * @param {MongoCallback} toRun - Function that is called after successfull connection with database
      */
 
-    async run(toRun) {
+    async run(toRun, onErr) {
         try {
             await client.connect()
             const db = client.db(dbName)
             await toRun(db)
             await client.close()
+            return true
         } catch {
+            console.log('')
             await client.close()
+            return false
         }
     }
 }
 
-export { database }
+const c = Math.random()
+console.log(`[ database index, random number ${c}]`)
+
+export default database
 
 // async function run() {
 //     try {
