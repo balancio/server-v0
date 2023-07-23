@@ -15,9 +15,11 @@ console.log(srv)
 
 const app = express()
 
-app.post('/login', (req, res) => {
-    const ok = auth.login('ben', 'ben1123')
+app.post('/login', async (req, res) => {
+    const token = await auth.login('ben', 'ben123')
+    const ok = await auth.validate(token)
     res.status(ok ? 200 : 406)
+    res.send('OK')
 })
 
 app.listen(srv.PORT, srv.HOST, async () => {

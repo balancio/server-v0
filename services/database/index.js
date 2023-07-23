@@ -13,18 +13,17 @@ const database = {
      * Connects with database and then calls toRun callback function
      * @param {MongoCallback} toRun - Function that is called after successfull connection with database
      */
-
     async run(toRun, onErr) {
         try {
             await client.connect()
-            const db = client.db(dbName)
-            await toRun(db)
+            const db = client.db(dbName)         
+            return await toRun(db)
+        }    
+        catch {
+            return undefined
+        }
+        finally {
             await client.close()
-            return true
-        } catch {
-            console.log('')
-            await client.close()
-            return false
         }
     }
 }
