@@ -1,12 +1,14 @@
-import { Db, MongoClient } from "mongodb";
+import { Db } from "mongodb";
 import { client, dbName } from "./config";
+
+const CLIENT = client()
 
 const database = {
 
     /**
      * Generic callback type for executing functions on MongoDB Database
      * @callback MongoCallback
-     * @param {Db} client - MongoDB Database Object
+     * @param {Db} db - MongoDB Database Object
      */
 
     /**
@@ -15,15 +17,20 @@ const database = {
      */
     async run(toRun, onErr) {
         try {
-            await client.connect()
-            const db = client.db(dbName)         
+            await CLIENT.connect()
+            console.log('[Database Run] Client Connection Finished')
+            const db = CLIENT.db(dbName)
+            console.log('[Database Run] Db Object Ready')
             return await toRun(db)
-        }    
-        catch {
+        }
+        catch (e) {
+            console.log('[Database Run] Error!')
+            console.log(e)
             return undefined
         }
         finally {
-            await client.close()
+            console.log('[Database Run] Finally')
+            await CLIENT.close()
         }
     }
 }

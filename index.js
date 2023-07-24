@@ -1,28 +1,47 @@
 import { config as envConfig } from 'dotenv'
 import express from 'express'
-import auth from './services/auth'
 
 envConfig()
 
-// --- Setup Express Application ---
+// --- Service Imports ---
 
-const srv = {
-    PORT: Number(process.env.SRV_PORT),
-    HOST: process.env.SRV_HOST,
-}
+import auth from './services/auth'
 
-console.log(srv)
+// --- Route Imports ---
+
+import walletsRouter from './routes/wallets'
+import usersRouter from './routes/users'
+
+// --- Express Server ---
 
 const app = express()
 
-app.post('/login', async (req, res) => {
-    const token = await auth.login('ben', 'ben123')
-    const ok = await auth.validate(token)
-    res.status(ok ? 200 : 406)
-    res.send('OK')
+app.use(express.json())
+
+// Check Token Validity
+app.use((req, res, next) => {
+    console.log('[Middleware] Check token validity')
+    const token = req.header('Authorization')
+    if(auth.token.validate(token)) { 
+        console.log('> Token is valid!')
+        next()
+    }
+    else { 
+        console.log('> Token is NOT valid.')
+        res.send(401) // Unauthorized
+    } 
 })
 
-app.listen(srv.PORT, srv.HOST, async () => {
-    // Debug Info
-    console.log(`Listening on port ${srv.PORT}`)
-})
+app.use('/wallets', walletsRouter)
+app.use('/users', usersRouter)
+
+// Start Listening
+
+app.listen(
+    Number(process.env.SRV_PORT), 
+    process.env.SRV_HOST, 
+    async () => {
+        // Debug Info
+        console.log(`Listening on port ${process.env.SRV_PORT}`)
+    }
+)
