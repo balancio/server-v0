@@ -2,6 +2,8 @@ import { Db } from "mongodb";
 import { client, dbName } from "./config";
 
 const CLIENT = client()
+await CLIENT.connect()
+
 
 const database = {
 
@@ -15,23 +17,19 @@ const database = {
      * Connects with database and then calls toRun callback function
      * @param {MongoCallback} toRun - Function that is called after successfull connection with database
      */
-    async run(toRun, onErr) {
+    async run(toRun, onErr = async () => undefined) {
         try {
-            await CLIENT.connect()
-            console.log('[Database Run] Client Connection Finished')
             const db = CLIENT.db(dbName)
-            console.log('[Database Run] Db Object Ready')
             return await toRun(db)
         }
         catch (e) {
             console.log('[Database Run] Error!')
             console.log(e)
-            return undefined
+            return await onErr()
         }
-        finally {
-            console.log('[Database Run] Finally')
-            await CLIENT.close()
-        }
+        // finally {
+        //     await CLIENT.close()
+        // }
     }
 }
 

@@ -8,20 +8,19 @@ import database from '../../database'
 const auth = {
     /**
      * Checks login credentials and if valid generates new auth token
-     * @param {string} user 
-     * @param {string} pass 
+     * @param {string} username 
+     * @param {string} password 
      * @returns Returns newly generated token string
      */
-    async login(user, pass) 
+    async login(username, password) 
     {
         return await database.run(async (db) => 
         {
-            console.log('[Auth Service] Login')
-            console.log(`user: ${user}, pass ${pass}`)
-            const coll = await db.collection('users').findOne({ 'username': user })
-            const pass_hash = hashSrv.sha512(pass + coll.password_salt)
-            if (pass_hash === coll.password_hash)
-                return await tokenSrv.generate(user, db)
+            console.log(`[Auth Service] Login | Username: ${username}, Password ${password}`)
+            const user = await db.collection('users').findOne({ 'username': username })
+            const pass_hash = hashSrv.sha512(password + user.password_salt)
+            if (pass_hash === user.password_hash)
+                return await tokenSrv.generate(user._id, db)
             return null
         })
     },

@@ -22,9 +22,9 @@ const sign = (header, payload, pass_hash) => hash.sha512(`${header}.${payload}.$
  * @param {Db} db 
  * @returns Returns password hash string if it exist, `null` otherwise
  */
-const getPassHash = async (username, db) => {
+const getPassHash = async (id, db) => {
     try {
-        const user = await db.collection('users').findOne({ 'username': username })
+        const user = await db.collection('users').findOne({ '_id': id })
         return user.password_hash
     }
     catch {
@@ -36,14 +36,14 @@ const getPassHash = async (username, db) => {
 const token = {
 
     /**
-     * @param {string} username 
+     * @param {string} id 
      * @param {Db} db 
      * @returns Returns auth token string
      */
-    async generate(username, db) {
+    async generate(id, db) {
         const header = enc_b64(JSON.stringify({ typ: 'custom_experimental' }))
-        const payload = enc_b64(JSON.stringify({ iat: Date.now(), sub: username }))
-        const signature = sign(header, payload, await getPassHash(username, db))
+        const payload = enc_b64(JSON.stringify({ iat: Date.now(), sub: id }))
+        const signature = sign(header, payload, await getPassHash(id, db))
         return `${header}.${payload}.${signature}`
     },
 
@@ -59,8 +59,7 @@ const token = {
             const payload = token[1]
             const signature = token[2]
 
-            // console.log('Payload:')
-            // console.log(dec_b64(payload))
+            console.log(`[Token Service] Validate | Token Payload:\n${dec_b64(payload)}`)
             const pass_hash = await getPassHash(JSON.parse(dec_b64(payload)).sub, db)
             
             return signature === sign(header, payload, pass_hash)
