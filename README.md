@@ -52,7 +52,7 @@ npm run start
     ```
 
 ### Wallet
-- [ ] `[GET] /users/:username/wallets`
+- [X] `[GET] /users/:username/wallets`
     ```ts
     // Array of Wallet objects
     [

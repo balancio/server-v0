@@ -71,8 +71,22 @@ router.get('/:username', async (req, res) => {
 })
 
 /* GET User Wallets */
-router.get('/:username/wallets', (req, res) => {
-    // TODO
+router.get('/:username/wallets', async (req, res) => {
+    try {
+        const wallets = await walletSrv.getUserWallets(req.params.username, req.header('Authorization'))
+        if (wallets) {
+            res.status(200) // Ok
+        }
+        else {
+            throw new Error('Something went wrong.')
+        }
+        res.send(wallets)
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+        res.send()
+    }
 })
 
 
