@@ -21,12 +21,12 @@ npm run start
 ## API
 
 ### User
-- `[GET] /wallets/:id/users`
+- [ ] `[GET] /wallets/:id/users`
     ```ts
     // Response Body | Array of usernames
     string[]
     ```
-- `[POST] /users/login`
+- [X] `[POST] /users/login`
     ```ts
     // Request Body | Login Credentials
     {
@@ -41,7 +41,7 @@ npm run start
         ...
     }
     ```
-- `[POST] /users/register`
+- [X] `[POST] /users/register`
     ```ts
     // Request Body | Registration Data
     {
@@ -52,7 +52,7 @@ npm run start
     ```
 
 ### Wallet
-- `[GET] /:username/wallets`
+- [ ] `[GET] /users/:username/wallets`
     ```ts
     // Array of Wallet objects
     [
@@ -67,7 +67,7 @@ npm run start
         ...
     ]
     ```
-- `[POST] /wallets`
+- [ ] `[POST] /wallets`
     ```ts
     // New Wallet object data
     {
@@ -77,7 +77,7 @@ npm run start
     ```
 
 ### Transaction
-- `[GET] /wallets/:id/transactions/:perPage/:pageNum`
+- [ ] `[GET] /wallets/:id/transactions/:perPage/:pageNum`
     ```ts
     // Response Body: Array of Transaction objects
     [
