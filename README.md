@@ -1,16 +1,93 @@
 # Balancio API Server
 
 ## How to run
+### Prerequisites
+- In root server directory file `.env` with values for server environment variables
+    ```sh
+    DB_CONN_CERT="<path-to-mongodb-certificate-file>"
+    DB_CONN_URL="<mongodb-connection-url>"
+    DB_NAME="<database-name>"
+
+    SRV_HOST="<server-host>"
+    SRV_PORT="<server-port>"
+
+    AUTH_TOKEN_SECRET="<secret-for-signing-auth-token>"
+    ```
+### Running server
 ```sh
-cd path/to/server/directory
-BALANCIO_DB_CERT="<path_to_mongo_cert>" node .
+npm run start
 ```
 
-## Endpoints
-- `/users`
-    - `/login [GET]` - _Get new Auth Token_
-    - `/:uid/profile [GET]` - _Get user profile info_
-    - `/:uid/profile [PUT]` - _Change user profile info_
-    - `/:uid/wallets [GET]` - _Get list of wallets that user has access to_
-- `/wallets`
-    - `/:wid` `[GET]`
+## API
+
+### User
+- `[GET] /wallets/:id/users`
+    ```ts
+    // Response Body | Array of usernames
+    string[]
+    ```
+- `[POST] /users/login`
+    ```ts
+    // Request Body | Login Credentials
+    {
+        username: string,
+        password: string
+    }
+    ```
+    ```ts
+    // Response Header | Bearer Token
+    {
+        Authorization: "Bearer <token>",
+        ...
+    }
+    ```
+- `[POST] /users/register`
+    ```ts
+    // Request Body | Registration Data
+    {
+        username: string,
+        password: string,
+        password_confirm: string,
+    }
+    ```
+
+### Wallet
+- `[GET] /:username/wallets`
+    ```ts
+    // Array of Wallet objects
+    [
+        {
+            "_id": ObjectId,
+            "name": string,
+            "currency": string,
+            "total": number,
+            "owner_ids": ObjectId[] // [ref] -> users
+            "transaction_ids": ObjectId[] // [ref] -> transactions
+        },
+        ...
+    ]
+    ```
+- `[POST] /wallets`
+    ```ts
+    // New Wallet object data
+    {
+        "name": string,
+        "currency": string
+    }
+    ```
+
+### Transaction
+- `[GET] /wallets/:id/transactions/:perPage/:pageNum`
+    ```ts
+    // Response Body: Array of Transaction objects
+    [
+        {
+            "_id": ObjectId,
+            "name": string,
+            "date": number, // Unix Time (ms)
+            "name": string,
+            "amount": number
+        },
+        ...
+    ]
+    ```
