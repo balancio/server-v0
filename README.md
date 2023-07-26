@@ -21,11 +21,6 @@ npm run start
 ## API
 
 ### User
-- [ ] `[GET] /wallets/:id/users`
-    ```ts
-    // Response Body | Array of usernames
-    string[]
-    ```
 - [X] `[POST] /users/login`
     ```ts
     // Request Body | Login Credentials
@@ -67,7 +62,7 @@ npm run start
         ...
     ]
     ```
-- [ ] `[POST] /wallets`
+- [X] `[POST] /wallets`
     ```ts
     // Request Body | New Wallet object data
     {

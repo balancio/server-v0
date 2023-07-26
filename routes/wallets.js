@@ -7,7 +7,23 @@ const router = express.Router()
 
 /* POST new Wallet */
 router.post('/', async (req, res) => {
-    // TODO Implement POST new Wallet
+    try {
+        const wallet = await walletSrv.newWallet(
+            req.header('Authorization'), 
+            req.body
+        )
+        if (wallet) {
+            res.status(201) // Created
+        }
+        else {
+            throw new Error('Something went wrong :(')
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+    }
+    res.send()
 })
 
 /* GET Wallet Transactions */

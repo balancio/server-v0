@@ -30,7 +30,7 @@ const walletSrv = {
                     if (user._id != auth_token.payload.sub)
                         return null
                     const wallets = await db.collection('wallets').find(
-                        { _id: { $in: user.wallet_ids.map((val) => new ObjectId(val)) } }
+                        { user_ids: { $all: [user._id.toString()] } }
                     ).toArray()
                     return wallets
                 },
@@ -38,6 +38,22 @@ const walletSrv = {
             )
         }
         return null
+    },
+    async newWallet(auth_token, newWalletData) {
+        auth_token = await token.parse(auth_token.replace('Bearer ', ''))
+        // console.log(auth_token)
+        if (auth_token) {
+            return await database.run(
+                async (db) => {
+                    const uid = auth_token.payload.sub
+                    newWalletData.user_ids = [uid]
+                    await db.collection('wallets').insertOne(newWalletData)
+                    return true
+                },
+                () => false
+            )
+        }
+        return false
     }
 }
 
