@@ -54,22 +54,22 @@ npm run start
 ### Wallet
 - [X] `[GET] /users/:username/wallets`
     ```ts
-    // Array of Wallet objects
+    // Response Body | Array of Wallet objects
     [
         {
-            "_id": ObjectId,
+            "_id": string,
             "name": string,
             "currency": string,
             "total": number,
-            "owner_ids": ObjectId[] // [ref] -> users
-            "transaction_ids": ObjectId[] // [ref] -> transactions
+            "user_ids": string[] // ref[] -> users
+            "transaction_ids": string[] // ref[] -> transactions
         },
         ...
     ]
     ```
 - [ ] `[POST] /wallets`
     ```ts
-    // New Wallet object data
+    // Request Body | New Wallet object data
     {
         "name": string,
         "currency": string
@@ -77,16 +77,28 @@ npm run start
     ```
 
 ### Transaction
-- [ ] `[GET] /wallets/:id/transactions/:perPage/:pageNum`
+- [ ] `[POST] /wallets/:id/transactions`
     ```ts
-    // Response Body: Array of Transaction objects
+    // Request Body | New Transaction object data
     [
         {
-            "_id": ObjectId,
-            "name": string,
+            "title": string,
             "date": number, // Unix Time (ms)
-            "name": string,
             "amount": number
+        },
+        ...
+    ]
+    ```
+- [X] `[GET] /wallets/:id/transactions`
+    ```ts
+    // Response Body | Array of Transaction objects
+    [
+        {
+            "_id": string,
+            "title": string,
+            "date": number, // Unix Time (ms)
+            "amount": number,
+            "wallet_id": string // ref -> wallets
         },
         ...
     ]

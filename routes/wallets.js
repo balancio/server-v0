@@ -1,6 +1,7 @@
 import express from 'express'
 
 import walletSrv from '../services/wallet'
+import transSrv from '../services/transaction'
 
 const router = express.Router()
 
@@ -10,8 +11,22 @@ router.post('/', async (req, res) => {
 })
 
 /* GET Wallet Transactions */
-router.get('/:id/transactions/:perPage/:pageNum', async (req, res) => {
-    // TODO Implement GET Wallet Transactions
+router.get('/:id/transactions', async (req, res) => {
+    try {
+        const trans = await transSrv.getWalletTrans(req.params.id, req.header('Authorization'))
+        if (trans) {
+            res.status(200) // Ok
+            res.send(trans)
+        }
+        else {
+            throw new Error('Something went wrong :(')
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+        res.send()
+    }
 })
 
 /* POST new Wallet Transaction */
