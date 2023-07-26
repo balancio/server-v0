@@ -77,7 +77,7 @@ npm run start
     ```
 
 ### Transaction
-- [ ] `[POST] /wallets/:id/transactions`
+- [X] `[POST] /wallets/:id/transactions`
     ```ts
     // Request Body | New Transaction object data
     [

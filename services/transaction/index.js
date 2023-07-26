@@ -30,25 +30,30 @@ const tranSrv = {
         }
         return null
     },
-    async newWalletTran(username, auth_token) {
+    async newWalletTran(wid, auth_token, newTranData) {
         auth_token = await token.parse(auth_token.replace('Bearer ', ''))
         // console.log(auth_token)
         if (auth_token) {
             return await database.run(
                 async (db) => {
-                    // console.log(id)
-                    const user = await db.collection('users').findOne({ username })
-                    if (user._id != auth_token.payload.sub)
+                    const uid = auth_token.payload.sub
+
+                    const wallet = await db.collection('wallets').findOne({ 
+                        _id: new ObjectId(wid), user_ids: { $all: [uid] } 
+                    })
+
+                    if (wallet == null)
                         return null
-                    const wallets = await db.collection('wallets').find(
-                        { _id: { $in: user.wallet_ids.map((val) => new ObjectId(val)) } }
-                    ).toArray()
-                    return wallets
+
+                    newTranData.wallet_id = wid
+                    await db.collection('transactions').insertOne(newTranData)
+
+                    return true
                 },
-                () => null
+                () => false
             )
         }
-        return null
+        return false
     }
 }
 

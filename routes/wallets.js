@@ -30,8 +30,25 @@ router.get('/:id/transactions', async (req, res) => {
 })
 
 /* POST new Wallet Transaction */
-router.get('/:id/transactions', async (req, res) => {
-    // TODO Implement POST new Wallet Transaction
+router.post('/:id/transactions', async (req, res) => {
+    try {
+        const trans = await transSrv.newWalletTran(
+            req.params.id, 
+            req.header('Authorization'), 
+            req.body
+        )
+        if (trans) {
+            res.status(201) // Created
+        }
+        else {
+            throw new Error('Something went wrong :(')
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+    }
+    res.send()
 })
 
 // TODO: Remove this route
