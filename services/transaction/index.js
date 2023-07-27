@@ -21,7 +21,7 @@ const tranSrv = {
 
                     const trans = await db.collection('transactions').find({ 
                         wallet_id: wid
-                    }).toArray()
+                    }).sort({ date: -1, _id: -1 }).toArray()
 
                     return trans
                 },
