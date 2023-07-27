@@ -96,7 +96,7 @@ npm run start
     ```
 - [X] `[GET] /wallets/:id/transactions`
     ```ts
-    // Response Body | Array of Transaction objects
+    // Response Body | Array of Transaction objects (Sorted by date, descending)
     [
         {
             "_id": string,
