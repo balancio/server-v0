@@ -38,15 +38,22 @@ const tranSrv = {
                 async (db) => {
                     const uid = auth_token.payload.sub
 
-                    const wallet = await db.collection('wallets').findOne({ 
-                        _id: new ObjectId(wid), user_ids: { $all: [uid] } 
-                    })
+                    const filter = { 
+                        _id: new ObjectId(wid), 
+                        user_ids: { $all: [uid] } 
+                    }
+
+                    const wallet = await db.collection('wallets').findOne(filter)
 
                     if (wallet == null)
                         return null
 
                     newTranData.wallet_id = wid
-                    await db.collection('transactions').insertOne(newTranData)
+                    await db.collection('transactions').insertOne(newTranData).then((res) => {
+                        db.collection('wallets').updateOne(filter, { 
+                            $set: { total: wallet.total + newTranData.amount }
+                        })
+                    })
 
                     return true
                 },

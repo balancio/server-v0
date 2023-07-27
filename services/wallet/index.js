@@ -47,6 +47,7 @@ const walletSrv = {
                 async (db) => {
                     const uid = auth_token.payload.sub
                     newWalletData.user_ids = [uid]
+                    newWalletData.total = 0
                     await db.collection('wallets').insertOne(newWalletData)
                     return true
                 },
