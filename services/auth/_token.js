@@ -45,7 +45,7 @@ const token = {
      */
     async generate(id, username, db) {
         const header = enc_b64(JSON.stringify({ typ: 'custom_experimental' }))
-        const payload = enc_b64(JSON.stringify({ iat: Date.now(), sub: id }))
+        const payload = enc_b64(JSON.stringify({ iat: Date.now(), sub: id, username }))
         const pass_hash = await getPassHash(id, db)
         const signature = sign(header, payload, pass_hash)
         // console.log(`Header: ${header}`)
