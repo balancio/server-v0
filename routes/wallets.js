@@ -2,11 +2,12 @@ import express from 'express'
 
 import walletSrv from '../services/wallet'
 import transSrv from '../services/transaction'
+import { checkToken } from '../middlewares'
 
 const router = express.Router()
 
 /* POST new Wallet */
-router.post('/', async (req, res) => {
+router.post('/', checkToken, async (req, res) => {
     try {
         const wallet = await walletSrv.newWallet(
             req.header('Authorization'), 
@@ -27,7 +28,7 @@ router.post('/', async (req, res) => {
 })
 
 /* GET Wallet Transactions */
-router.get('/:id/transactions', async (req, res) => {
+router.get('/:id/transactions', checkToken, async (req, res) => {
     try {
         const trans = await transSrv.getWalletTrans(req.params.id, req.header('Authorization'))
         if (trans) {
@@ -46,7 +47,7 @@ router.get('/:id/transactions', async (req, res) => {
 })
 
 /* POST new Wallet Transaction */
-router.post('/:id/transactions', async (req, res) => {
+router.post('/:id/transactions', checkToken, async (req, res) => {
     try {
         const trans = await transSrv.newWalletTran(
             req.params.id, 
@@ -68,7 +69,7 @@ router.post('/:id/transactions', async (req, res) => {
 })
 
 /* GET Wallet */
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkToken, async (req, res) => {
     try {
         const wallet = await walletSrv.getWallet(req.params.id, req.header('Authorization'))
         if (wallet) {

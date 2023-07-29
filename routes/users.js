@@ -6,6 +6,7 @@ const router = express.Router()
 import authSrv from '../services/auth'
 import userSrv from '../services/user'
 import walletSrv from '../services/wallet'
+import { checkToken } from '../middlewares'
 
 /* POST new User (Register) */
 router.post('/', async (req, res) => {
@@ -52,7 +53,7 @@ router.post('/login', async (req, res) => {
 })
 
 /* GET User (Profile Data) */
-router.get('/:username', async (req, res) => {
+router.get('/:username', checkToken, async (req, res) => {
     try {
         const user = await userSrv.getUser(req.params.username, req.header('Authorization'))
         if (user) {
@@ -71,7 +72,7 @@ router.get('/:username', async (req, res) => {
 })
 
 /* GET User Wallets */
-router.get('/:username/wallets', async (req, res) => {
+router.get('/:username/wallets', checkToken, async (req, res) => {
     try {
         const wallets = await walletSrv.getUserWallets(req.params.username, req.header('Authorization'))
         if (wallets) {

@@ -1,5 +1,6 @@
 import { config as envConfig } from 'dotenv'
 import express from 'express'
+import cors from 'cors'
 
 envConfig()
 
@@ -17,20 +18,9 @@ import usersRouter from './routes/users'
 const app = express()
 
 app.use(express.json())
-
-// Check Token Validity
-app.use((req, res, next) => {
-    console.log('[Middleware] Check token validity')
-    const token = req.header('Authorization')
-    if(auth.token.validate(token)) { 
-        console.log('> Token is valid!')
-        next()
-    }
-    else { 
-        console.log('> Token is NOT valid.')
-        res.send(401) // Unauthorized
-    } 
-})
+app.use(cors({
+    origin: '*', exposedHeaders: ['Authorization']
+}))
 
 app.use('/wallets', walletsRouter)
 app.use('/users', usersRouter)
