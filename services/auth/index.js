@@ -20,7 +20,7 @@ const auth = {
             const user = await db.collection('users').findOne({ 'username': username })
             const pass_hash = hashSrv.sha512(password + user.password_salt)
             if (pass_hash === user.password_hash)
-                return await tokenSrv.generate(user._id, db)
+                return await tokenSrv.generate(user._id, user.username, db)
             return null
         })
     },
@@ -33,8 +33,11 @@ const auth = {
         async validate(auth_token) 
         {
             if(auth_token) {
-                auth_token = auth_token.replace('Bearer ', '')
-                return await tokenSrv.validate(auth_token)
+                return await database.run(async (db) => 
+                {
+                    auth_token = auth_token.replace('Bearer ', '')
+                    return await tokenSrv.validate(auth_token, db)
+                })
             }
             return false
         },

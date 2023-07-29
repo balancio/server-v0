@@ -1,5 +1,5 @@
 import { config as envConfig } from 'dotenv'
-import { Db } from 'mongodb'
+import { Db, ObjectId } from 'mongodb'
 import hash from './_hash'
 
 envConfig()
@@ -24,10 +24,13 @@ const sign = (header, payload, pass_hash) => hash.sha512(`${header}.${payload}.$
  */
 const getPassHash = async (id, db) => {
     try {
+        // console.log(db ? 'Db is not null' : 'Db is null?!')
+        // console.log(`User ID: ${id}`)
         const user = await db.collection('users').findOne({ '_id': id })
         return user.password_hash
     }
-    catch {
+    catch (c) {
+        console.log(c)
         return null
     }
 
@@ -40,10 +43,15 @@ const token = {
      * @param {Db} db 
      * @returns Returns auth token string
      */
-    async generate(id, db) {
+    async generate(id, username, db) {
         const header = enc_b64(JSON.stringify({ typ: 'custom_experimental' }))
         const payload = enc_b64(JSON.stringify({ iat: Date.now(), sub: id }))
-        const signature = sign(header, payload, await getPassHash(id, db))
+        const pass_hash = await getPassHash(id, db)
+        const signature = sign(header, payload, pass_hash)
+        // console.log(`Header: ${header}`)
+        // console.log(`Payload: ${payload}`)
+        // console.log(`Pass Hash: ${pass_hash}`)
+        // console.log(`Signature: ${signature}`)
         return `${header}.${payload}.${signature}`
     },
 
@@ -60,11 +68,24 @@ const token = {
             const signature = token[2]
 
             console.log(`[Token Service] Validate | Token Payload:\n${dec_b64(payload)}`)
-            const pass_hash = await getPassHash(JSON.parse(dec_b64(payload)).sub, db)
-            
-            return signature === sign(header, payload, pass_hash)
+            const user_id = new ObjectId(JSON.parse(dec_b64(payload)).sub)
+            const pass_hash = await getPassHash(user_id, db)
+
+            // console.log(`Header: ${header}`)
+            // console.log(`Payload: ${payload}`)
+            // console.log(`Pass Hash: ${pass_hash}`)
+            // console.log(`Signature: ${signature}`)
+
+            if (pass_hash == null)
+                throw new Error('Password Hash read from DB is null. Is connection Ok?')
+
+            const sig = sign(header, payload, pass_hash)
+            // console.log(`SIG: ${signature}`)
+            // console.log(`SIG: ${sig}`)
+            return signature === sig
         }
-        catch {
+        catch (e) {
+            console.log(e)
             return false
         }
     },
