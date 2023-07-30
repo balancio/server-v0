@@ -36,7 +36,7 @@ npm run start
         ...
     }
     ```
-- [X] `[POST] /users/register`
+- [X] `[POST] /users`
     ```ts
     // Request Body | Registration Data
     {
