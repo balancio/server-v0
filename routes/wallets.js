@@ -87,4 +87,23 @@ router.get('/:id', checkToken, async (req, res) => {
     }
 })
 
+/* DELETE Wallet */
+router.delete('/:id', checkToken, async (req, res) => {
+    try {
+        const wallet = await walletSrv.deleteWallet(req.params.id, req.header('Authorization'))
+        if (wallet) {
+            res.status(200) // Ok
+            res.send(wallet)
+        }
+        else {
+            throw new Error('Something went wrong :(')
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+        res.send({})
+    }
+})
+
 export default router

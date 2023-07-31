@@ -55,7 +55,27 @@ const walletSrv = {
             )
         }
         return false
-    }
+    },
+    async deleteWallet(id, auth_token) {
+        auth_token = await token.parse(auth_token.replace('Bearer ', ''))
+        // console.log(auth_token)
+        if (auth_token) {
+            return await database.run(
+                async (db) => {
+                    // console.log(id)
+                    const wallet = await db.collection('wallets').findOne({ _id: new ObjectId(id) })
+                    if (wallet.user_ids.includes(auth_token.payload.sub)) {
+                        await db.collection('wallets').deleteOne({ _id: new ObjectId(id) })
+                        await db.collection('transactions').deleteMany({ wallet_id: id })
+                        return true
+                    }
+                    return false
+                },
+                () => false
+            )
+        }
+        return false
+    },
 }
 
 export default walletSrv
