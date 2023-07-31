@@ -68,6 +68,25 @@ router.post('/:id/transactions', checkToken, async (req, res) => {
     res.send()
 })
 
+/* DELETE Wallet Transaction */
+router.delete('/:wid/transactions/:tid', checkToken, async (req, res) => {
+    try {
+        const ok = await transSrv.deleteWalletTran(req.params.wid, req.params.tid, req.header('Authorization'))
+        if (ok) {
+            res.status(200) // Ok
+            res.send()
+        }
+        else {
+            throw new Error('Something went wrong :(')
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400) // Bad request
+        res.send()
+    }
+})
+
 /* GET Wallet */
 router.get('/:id', checkToken, async (req, res) => {
     try {
@@ -90,10 +109,10 @@ router.get('/:id', checkToken, async (req, res) => {
 /* DELETE Wallet */
 router.delete('/:id', checkToken, async (req, res) => {
     try {
-        const wallet = await walletSrv.deleteWallet(req.params.id, req.header('Authorization'))
-        if (wallet) {
+        const ok = await walletSrv.deleteWallet(req.params.id, req.header('Authorization'))
+        if (ok) {
             res.status(200) // Ok
-            res.send(wallet)
+            res.send()
         }
         else {
             throw new Error('Something went wrong :(')
