@@ -1,5 +1,9 @@
 # Balancio API Server
 
+REST API server application for Balancio. It's built with Node and Express. For communication with MongoDB database official `mongodb` driver is used.
+
+Server is currently in `prototype` phase.
+
 ## How to run
 ### Prerequisites
 - In root server directory file `.env` with values for server environment variables
